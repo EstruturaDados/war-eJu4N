@@ -52,14 +52,15 @@ void ExibirTerritorios(Territorio* mapa, int quantidade_territorios) {
     }
 }
 
+//Funcao para ataque
 void Atacar(Territorio* atacante, Territorio* defensor) {
     int dadoAtacante, dadoDefensor;
     
-    // printf("--- FASE DE ATAQUE ---");
-
+    // Dando valores aleatorios ao dados
     dadoAtacante = rand() % 6 + 1;
     dadoDefensor = rand() % 6 + 1;
     
+    //Checando se territorios pentecem a mesma cor
     if (strcmp(atacante->cor, defensor->cor) == 0) {
         printf("Os territorios pertecem a mesma cor.\n");
         limparbufferentrada();
@@ -103,6 +104,7 @@ int main() {
     printf("Quantos territorios voce quer cadastrar? ");
     scanf("%d", &quantidade_territorios);
 
+    //Caso a quantidade de territorios seja um valor impossivel
     while (quantidade_territorios < 2)
     {
         printf("Quantidade invalida!, tente novamente\n");
