@@ -93,21 +93,58 @@ void Atacar(Territorio* atacante, Territorio* defensor) {
 
 char* missoes[5] = {
     "Eliminar todas as tropas de cor vermelha.",
+    "Reduzir as tropas de um territorio inimigo para exatamente uma tropa.",
     "Conquistar tres territorios seguidos.",
     "Controlar ao menos 5 territorios ao mesmo tempo.",
-    "Reduzir as tropas de um territorio inimigo para exatamente uma tropa.",
     "Conquistar dois territorios de cores de exercito diferentes em qualquer ordem."
 };
 
-//Funcao para atribuir missoes
 void atribuirMissao(char* destino, char* missoes[], int totalMissoes) {
     int indice = rand() % totalMissoes;
     strcpy(destino, missoes[indice]);
 }
 
-//Verificando missoes
 int verificarMissao(char* missao, Territorio* mapa, int quantidade_territorios, char* corJogador) {
     // retorna 1 se cumpriu, 0 se nao cumpriu
+    //Missao 1: eliminar todas as tropas de cor vermelha
+    if (strcmp(missao, "Eliminar todas as tropas de cor vermelha.") == 0) {
+        for (int i = 0; i < quantidade_territorios; i++) {
+            if (strcmp(mapa[i].cor, "vermelho") == 0 || strcmp(mapa[i].cor, "Vermelho") == 0) { 
+                // Verificar sem tem territorio vermelho
+                return 0;
+            }
+        }
+        // Nao acho nenhum territorio vermelho.
+        return 1;
+    }
+
+    //Missao 2: Reduzir tropas de um territorio para exatamente uma tropa
+    if (strcmp(missao, "Reduzir as tropas de um territorio inimigo para exatamente uma tropa.") == 0) {
+        for (int i = 0; i < quantidade_territorios; i++) {
+            // identificar territorio inimigo sendo cor diferente do jogador principal
+            if (strcmp(mapa[i].cor, corJogador) != 0 && mapa[i].tropas == 1) {
+                return 1; // ja existe inimigo com apenas uma tropa
+            } 
+        }
+        return 0; // condicao nao realizada
+    }
+
+    //Missao 3: conquistar tres territorios seguidos
+    if (strcmp(missao, "Conquistar tres territorios seguidos.") == 0) {
+        int contador = 0;
+        for (int i = 0; i < quantidade_territorios; i++) {
+            if (strcmp(mapa[i].cor, corJogador) == 0) {
+                contador++;
+            }
+        }
+        if (contador >= 3) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    //Missao 4: Controlar cinco territorios
     if (strcmp(missao, "Controlar ao menos 5 territorios ao mesmo tempo.") == 0) {
         int contador = 0;
         for (int i = 0; i < quantidade_territorios; i++) {
@@ -121,6 +158,26 @@ int verificarMissao(char* missao, Territorio* mapa, int quantidade_territorios, 
             return 0;
         }
     }
+
+    // Missao 5: conquistar dois territorios de cores diferente em qualquer ordem
+    if (strcmp(missao, "Conquistar dois territorios de cores de exercito diferentes em qualquer ordem.") == 0) {
+        char corInimigo1[10] = "";
+        char corInimigo2[10] = "";
+
+        for (int i = 0; i < quantidade_territorios; i++) {
+            if (strcmp(mapa[i].cor, corJogador) != 0) {
+                if (corInimigo1[0] == '\0') {
+                    strcpy(corInimigo1, mapa[i].cor);
+                } else if (strcmp(mapa[i].cor, corInimigo1) != 0) {
+                    strcpy(corInimigo2, mapa[i].cor);
+                    return 1;
+                } 
+            }
+        }
+        return 0;
+    }
+
+    return 0;
 }
 
 void LiberarMemoria(Territorio* mapa, char* missaoJogador) {
@@ -179,7 +236,7 @@ int main() {
 
     do {
         printf("---------------------------------\n");
-        printf("---WAR AVENTUREIRO---\n");
+        printf("---WAR MESTRE---\n");
         printf("Escolha uma opcao: \n");
         printf("1. Exibir territorios atuais\n");
         printf("2. Fase de ataque\n");
@@ -208,7 +265,6 @@ int main() {
                 getchar();
             }
 
-            //Missao 5: Conquistar ao menos cinco territorios
             if (verificarMissao(missaoJogador, mapa, quantidade_territorios, corJogador)) {
                 printf("Parabens voce cumpriu sua missao!\n");
             }
@@ -218,6 +274,7 @@ int main() {
             printf("Saindo do programa...\n");
             printf("\nPressione Enter para continuar...\n");
             getchar();
+            break;
         default:
             printf("Opcao invalida!\n");
             printf("\nPressione Enter para continuar...\n");
